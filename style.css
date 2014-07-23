@@ -1,0 +1,79 @@
+html {
+  background: #1b3d63;
+  background: -moz-linear-gradient(-45deg, #1b3d63 0%, #296389 16%, #1190cf 29%, #2370a3 41%, #295c89 49%, #376e9b 50%, #588dbe 83%, #769bc2 100%);
+  background: -webkit-linear-gradient(-45deg, #1b3d63 0%,#296389 16%,#1190cf 29%,#2370a3 41%,#295c89 49%,#376e9b 50%,#588dbe 83%,#769bc2 100%);
+  background: -o-linear-gradient(-45deg, #1b3d63 0%,#296389 16%,#1190cf 29%,#2370a3 41%,#295c89 49%,#376e9b 50%,#588dbe 83%,#769bc2 100%);
+  background: -ms-linear-gradient(-45deg, #1b3d63 0%,#296389 16%,#1190cf 29%,#2370a3 41%,#295c89 49%,#376e9b 50%,#588dbe 83%,#769bc2 100%);
+  background: linear-gradient(135deg, #1b3d63 0%,#296389 16%,#1190cf 29%,#2370a3 41%,#295c89 49%,#376e9b 50%,#588dbe 83%,#769bc2 100%);
+  height: 100%;
+  font-family: Tahoma, Verdana, sans-serif;
+  color: white;
+}
+
+.container {
+  position: absolute;
+  left: 300px;
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+
+#top {
+  position: absolute;
+  overflow: auto;
+  width: 100%;
+  height: calc(50% - 2px);
+}
+
+#output {
+  position: absolute;
+  overflow: auto;
+  width: 100%;
+  height: calc(50% - 2px);
+  bottom: 0;
+}
+
+table {
+  white-space: nowrap;
+}
+
+th {
+  font-weight: bolder;
+  background-color: rgb(46, 95, 89);
+}
+
+tr:hover {
+  background-color: black !important;
+  outline: 2px solid white;
+}
+
+tr {
+  background-color: rgb(15, 40, 55);
+}
+
+tr:nth-child(odd) {
+  background-color: rgb(22, 56, 71);
+}
+
+td {
+  border-right: 1px dotted white;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#huurderslijst {
+  position: absolute;
+  bottom: 5px;
+  top: 140px;
+  width: 288px;
+  overflow: auto;
+}
+
+#huurderslijst, #top, #output {
+  background: #0f3233;
+  background: -moz-linear-gradient(45deg, #0f3233 0%, #525a59 34%, #576764 42%, #626e6c 50%, #4c5654 61%, #323837 82%, #090909 100%);
+  background: -webkit-linear-gradient(45deg, #0f3233 0%,#525a59 34%,#576764 42%,#626e6c 50%,#4c5654 61%,#323837 82%,#090909 100%);
+  background: -o-linear-gradient(45deg, #0f3233 0%,#525a59 34%,#576764 42%,#626e6c 50%,#4c5654 61%,#323837 82%,#090909 100%);
+  background: -ms-linear-gradient(45deg, #0f3233 0%,#525a59 34%,#576764 42%,#626e6c 50%,#4c5654 61%,#323837 82%,#090909 100%);
+  background: linear-gradient(45deg, #0f3233 0%,#525a59 34%,#576764 42%,#626e6c 50%,#4c5654 61%,#323837 82%,#090909 100%);
+}
