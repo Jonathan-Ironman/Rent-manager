@@ -1,0 +1,7 @@
+*.csv
+
+/SAMPLES
+
+*.publishproj
+
+/App_Data

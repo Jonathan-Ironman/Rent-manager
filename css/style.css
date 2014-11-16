@@ -1,0 +1,38 @@
+
+input[type=file] {
+    background: #00bc8c;
+    border-radius: 1em;
+    color: white;
+}
+
+@media (min-width: 1400px) {
+    .container {
+        width: 90%;
+    }
+
+    .column {
+        overflow: auto;
+    }
+}
+
+::-webkit-scrollbar-track {
+    background-color: #555;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #00bc8c;
+    border-radius: 8px;
+}
+
+.danger {
+    background-color: rgba(255, 0, 0, 0.12) !important;
+}
+
+.red {
+    background-color: red !important;
+}
