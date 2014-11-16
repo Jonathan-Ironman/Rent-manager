@@ -2,7 +2,7 @@
 <html lang="en" ng-app="ngAppRentManager">
 <head>
     <meta charset="utf-8">
-    <title>RentManager3</title>
+    <title>Rent-Manager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Jonathan IJzerman">
@@ -39,7 +39,7 @@
             <div class="col-md-9 column">
 
                 <div class="page-header">
-                    <h1>RentManager3 <small>Because 1 and 2 just didn't cut it...</small></h1>
+                    <h1>Rent-Manager <small>Tracking payments the easy way</small></h1>
                 </div>
 
                 <ul class="nav nav-tabs">
@@ -51,6 +51,8 @@
                             <li><a href="#" ng-click="search.minAmount = 0">Positive only</a></li>
                             <li><a href="#" ng-click="search.minAmount = 100">100+</a></li> 
                             <li><a href="#" ng-click="search.tenantOnly = true">Huurders</a></li> 
+                            <li class="divider"></li>
+                            <li><a href="#" ng-click="statusHighlight = !statusHighlight;">Toggle status highlight</a></li> 
                             <li class="divider"></li>
                             <li><a href="#" ng-click="search.minAmount = null; search.tenantOnly = false">All</a></li> 
                         </ul>
@@ -74,12 +76,12 @@
                         <tr ng-repeat="payment in payments | filter:search.text | orderBy:sort:reverse"
                             ng-hide="(search.minAmount != null && search.minAmount > payment.amount) || (search.tenantOnly && !payment.tenant)"
                             ng-class-even="red"
-                            ng-class="{danger: payment.diff > 0}">
+                            ng-class="{danger: payment.diff > 0 && statusHighlight, green : payment.diff <= 0 && statusHighlight}">
                             <td>{{payment.date | date : "dd&nbsp;MMM&nbsp;yyyy"}}</td>
                             <td ng-attr-title="{{payment.tenant}}">{{payment.name}}</td>
                             <td>{{payment.amount | currency: "€&nbsp;"}}</td>
                             <td>{{payment.rent | currency: "€&nbsp;"}}</td>
-                            <td>{{payment.diff | filter : this != 0 | currency: "€&nbsp;"}}</td>
+                            <td><span ng-if="payment.diff != 0">{{payment.diff | currency: "€&nbsp;"}}</span></td>
                             <td>{{payment.desc}}</td>
                             <td>{{payment.account}}</td>
                         </tr>
@@ -92,9 +94,9 @@
                 <label for="csvInput">Load CSV</label>
                 <input type="file" id="csvInput" accept=".csv" />
                 <p class="help-block">
-                    Example block-level help text here.
+                    Girotel CSV, SNS CSV, Huurders.csv
                 </p>
-                <a id="modal-fileType" href="#modal-container-fileType" role="button" class="btn" data-toggle="modal">Launch fileType modal</a>
+                <!--<a id="modal-fileType" href="#modal-container-fileType" role="button" class="btn" data-toggle="modal">Launch fileType modal</a>-->
                 <div class="modal fade" id="modal-container-fileType" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">

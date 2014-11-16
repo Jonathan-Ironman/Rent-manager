@@ -12,4 +12,5 @@ controller('RentCtrl', ['$scope', function ($scope) {
     $scope.search = { text: "", minAmount: 0 };
     $scope.sort = 'date';
     $scope.reverse = true;
+    $scope.statusHighlight = false;
 }]);
