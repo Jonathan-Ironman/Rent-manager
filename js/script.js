@@ -55,7 +55,7 @@ function parseGirotel(text) { // ING bank.
 }
 
 function parseSNS(text) { // SNS bank.
-    var csvArray = CSVToArray(text,";");
+    var csvArray = CSVToArray(text, ";");
     for (var r = 0; r < csvArray.length; r++) {
         var items = csvArray[r];
         var transaction = {};
@@ -64,32 +64,42 @@ function parseSNS(text) { // SNS bank.
         transaction.name = items[3].replace(/["']/g, "").trim(); // Trim qoutes and whitespace.
         transaction.date = parseDateDagMaandJaar(items[0]);
         transaction.amount = items[10];
+        transaction.amount = parseFloat(transaction.amount);
         transaction.desc = items[17].replace(/["']/g, "").trim();
         // Bind account to tenant.
         linkTenant(transaction);
 
         data.push(transaction);
     }
-    toTable();
 }
 
-function parseABN(text) { //TODO: ABN bank.
-    data = [];
-    var rows = text.split('\n');
+function parseABN(text) { // ABN bank. You are basterds.
+    var csvArray = CSVToArray(text, "\t");
+    var reAcc = /IBAN:\s*(\S+)/;
+    var reAcc2 = /IBAN\/([^\/]+)\//;
+    var reName = /Naam:\s*(.+)\s\s/;
+    var reName2 = /NAME\/([^\/]+)\//;
+    for (var r = 0; r < csvArray.length; r++) {
+        var items = csvArray[r];
+        var transaction = {};
+        transaction.account = reAcc.exec(items[7]) && reAcc.exec(items[7])[1]; // Test & Extract part after 'IBAN: '.
+        // Try one more because they are basterds.
+        if (!transaction.account)
+            transaction.account = reAcc2.exec(items[7]) && reAcc2.exec(items[7])[1]; // Test & Extract 'IBAN/.../'.
+        if (!transaction.account) continue; // Skip blanks
+        transaction.name = reName.exec(items[7]) && reName.exec(items[7])[1]; // Test & Extract part after 'Name: '.
+        // Did I mention they are basterds?
+        if (!transaction.name)
+            transaction.name = (reName2.exec(items[7]) && reName2.exec(items[7])[1]) || "N/A";  // Test & Extract 'NAME/.../'.
+        transaction.date = parseDate(items[2]); //jjjjmmdd
+        transaction.amount = items[6].replace(',', '.');
+        transaction.amount = parseFloat(transaction.amount);
+        transaction.desc = items[7].replace(/  +/g, ' ').trim();
+        // Bind account to tenant.
+        linkTenant(transaction);
 
-    for (var r = 0; r < rows.length; r++) {
-        var items = rows[r].split(',');
-        var obj = {};
-        obj.account = items[4];
-        if (!obj.account) continue; // Skip blanks
-        obj.name = items[5].replace(/["']/g, "").trim(); //trim qoutes and whitespace
-        obj.date = parseDate(items[1]); //jjjjmmdd
-        obj.amount = items[8] == '"B"' ? items[7] : "-" + items[7]; //Bij of Af (quoted)
-        obj.desc = items[10].replace(/["']/g, "").trim();
-
-        data.push(obj);
+        data.push(transaction);
     }
-    toTable();
 }
 
 function linkTenant(transaction) {
