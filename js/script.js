@@ -79,6 +79,8 @@ function parseABN(text) { // ABN bank. You are basterds.
     var reAcc2 = /IBAN\/([^\/]+)\//;
     var reName = /Naam:\s*(.+)\s\s/;
     var reName2 = /NAME\/([^\/]+)\//;
+    var reOpmerking = /Omschrijving:\s*(.+)\s\s/;
+    var reOpmerking2 = /REMI\/([^\/]+)\//;
     for (var r = 0; r < csvArray.length; r++) {
         var items = csvArray[r];
         var transaction = {};
@@ -94,7 +96,12 @@ function parseABN(text) { // ABN bank. You are basterds.
         transaction.date = parseDate(items[2]); //jjjjmmdd
         transaction.amount = items[6].replace(',', '.');
         transaction.amount = parseFloat(transaction.amount);
-        transaction.desc = items[7].replace(/  +/g, ' ').trim();
+        // Did I mention?
+        transaction.desc = reOpmerking.exec(items[7]) && reOpmerking.exec(items[7])[1];
+        if (!transaction.desc)
+            transaction.desc = reOpmerking2.exec(items[7]) && reOpmerking2.exec(items[7])[1];
+        if (!transaction.desc)
+            transaction.desc = items[7].replace(/  +/g, ' ').trim();
         // Bind account to tenant.
         linkTenant(transaction);
 

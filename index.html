@@ -67,8 +67,8 @@
                             <th ng-click="sort = 'amount'; reverse=!reverse">Amount</th>
                             <th ng-click="sort = 'rent'; reverse=!reverse">Rent</th>
                             <th ng-click="sort = 'diff'; reverse=!reverse">Diff</th>
-                            <th>Desc</th>
                             <th>Rekening</th>
+                            <th>Desc</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,12 +78,12 @@
                             ng-class-even="red"
                             ng-class="{danger: payment.diff > 0 && statusHighlight, green : payment.diff <= 0 && statusHighlight}">
                             <td>{{payment.date | date : "dd&nbsp;MMM&nbsp;yyyy"}}</td>
-                            <td ng-attr-title="{{payment.tenant}}">{{payment.name}}</td>
+                            <td ng-attr-title="{{payment.tenant}}">{{payment.name | limitTo: 30}}</td>
                             <td>{{payment.amount | currency: "€&nbsp;"}}</td>
                             <td>{{payment.rent | currency: "€&nbsp;"}}</td>
                             <td><span ng-if="payment.diff != 0">{{payment.diff | currency: "€&nbsp;"}}</span></td>
-                            <td>{{payment.desc}}</td>
                             <td>{{payment.account}}</td>
+                            <td ng-attr-title="{{payment.desc}}">{{payment.desc | limitTo: 50}}</td>
                         </tr>
                     </tbody>
                 </table>
