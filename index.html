@@ -49,13 +49,15 @@
                     <li class="dropdown pull-right">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">Filters<strong class="caret"></strong></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#" ng-click="search.minAmount = 0">Positive only</a></li>
-                            <li><a href="#" ng-click="search.minAmount = 100">100+</a></li>
+                            <li><a href="#" ng-click="search.minAmount = 0; search.maxAmount = null">Positive only</a></li>
+                            <li><a href="#" ng-click="search.maxAmount = 0; search.minAmount = null">Negative only</a></li>
+                            <li><a href="#" ng-click="search.minAmount = 100; search.maxAmount = null">100+</a></li>
+                            <li><a href="#" ng-click="search.minAmount = null; search.maxAmount = -100">-100+</a></li>
                             <li><a href="#" ng-click="search.tenantOnly = true">Huurders</a></li>
                             <li class="divider"></li>
                             <li><a href="#" ng-click="statusHighlight = !statusHighlight;">Toggle status highlight</a></li>
                             <li class="divider"></li>
-                            <li><a href="#" ng-click="search.minAmount = null; search.tenantOnly = false">All</a></li>
+                            <li><a href="#" ng-click="search.maxAmount = null; search.minAmount = null; search.tenantOnly = false">All</a></li>
                         </ul>
                     </li>
                     <li class="pull-right"><input type="text" class="form-control" placeholder="Search all" ng-model="search.text"></li>
@@ -75,7 +77,7 @@
                     <tbody>
                         <!--TODO: ng-class-even?  ng-class="{odd: $odd, even: $even}-->
                         <tr ng-repeat="payment in payments | filter:search.text | orderBy:sort:reverse"
-                            ng-hide="(search.minAmount != null && search.minAmount > payment.amount) || (search.tenantOnly && !payment.tenant)"
+                            ng-hide="(search.minAmount != null && search.minAmount > payment.amount) || (search.maxAmount != null && search.maxAmount < payment.amount) || (search.tenantOnly && !payment.tenant)"
                             ng-class-even="red"
                             ng-class="{danger: payment.diff > 0 && statusHighlight, green : payment.diff <= 0 && statusHighlight}">
                             <td>{{payment.date | date : "dd&nbsp;MMM&nbsp;yyyy"}}</td>
