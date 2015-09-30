@@ -5,3 +5,6 @@
 *.publishproj
 
 /App_Data
+
+*.suo
+*.sln
