@@ -45,16 +45,17 @@
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="#">Profile</a></li>
+                    <li class="pull-right"><button type="button" class="btn btn-default" onclick="resetData()">Reset</button></li>
                     <li class="dropdown pull-right">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">Filters<strong class="caret"></strong></a>
                         <ul class="dropdown-menu">
                             <li><a href="#" ng-click="search.minAmount = 0">Positive only</a></li>
-                            <li><a href="#" ng-click="search.minAmount = 100">100+</a></li> 
-                            <li><a href="#" ng-click="search.tenantOnly = true">Huurders</a></li> 
+                            <li><a href="#" ng-click="search.minAmount = 100">100+</a></li>
+                            <li><a href="#" ng-click="search.tenantOnly = true">Huurders</a></li>
                             <li class="divider"></li>
-                            <li><a href="#" ng-click="statusHighlight = !statusHighlight;">Toggle status highlight</a></li> 
+                            <li><a href="#" ng-click="statusHighlight = !statusHighlight;">Toggle status highlight</a></li>
                             <li class="divider"></li>
-                            <li><a href="#" ng-click="search.minAmount = null; search.tenantOnly = false">All</a></li> 
+                            <li><a href="#" ng-click="search.minAmount = null; search.tenantOnly = false">All</a></li>
                         </ul>
                     </li>
                     <li class="pull-right"><input type="text" class="form-control" placeholder="Search all" ng-model="search.text"></li>
@@ -72,7 +73,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!--TODO: ng-class-even?-->
+                        <!--TODO: ng-class-even?  ng-class="{odd: $odd, even: $even}-->
                         <tr ng-repeat="payment in payments | filter:search.text | orderBy:sort:reverse"
                             ng-hide="(search.minAmount != null && search.minAmount > payment.amount) || (search.tenantOnly && !payment.tenant)"
                             ng-class-even="red"

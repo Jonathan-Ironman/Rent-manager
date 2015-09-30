@@ -11,7 +11,7 @@ $(function () { // Init.
 });
 
 function parseCSV(text, type) {
-    data = []; //hmmm
+    //data = []; //hmmm
 
     switch (type) {
         case "Girotel":
@@ -35,18 +35,26 @@ function parseCSV(text, type) {
     ngRentCtrl.setData(data);
 }
 
+function resetData() {
+    data = [];
+    // Store.
+    localStorage["data"] = JSON.stringify(data);
+    // Angular show.
+    ngRentCtrl.setData(data);
+}
+
 function parseGirotel(text) { // ING bank.
     var csvArray = CSVToArray(text);
     for (var r = 0; r < csvArray.length; r++) {
         var items = csvArray[r];
         var transaction = {};
-        transaction.account = items[4];
-        if (!transaction.account || transaction.account == "0") continue; // Skip blanks.
-        transaction.name = items[5].replace(/["']/g, "").trim(); // Trim quotes and whitespace.
-        transaction.date = parseDate(items[1]); //jjjjmmdd
-        transaction.amount = items[8] == "B" ? items[7] : "-" + items[7]; // "Bij" of "Af"
+        transaction.account = items[3];
+        if (!transaction.account || !/\d/.test(transaction.account) || transaction.account == "0") continue; // Skip blanks.
+        transaction.name = items[1].replace(/["']/g, "").trim(); // Trim quotes and whitespace.
+        transaction.date = parseDate(items[0]); //jjjjmmdd
+        transaction.amount = items[5] == "Bij" ? items[6] : "-" + items[6]; // "Bij" of "Af"
         transaction.amount = parseFloat(transaction.amount);
-        transaction.desc = items[10].replace(/["']/g, "").trim();
+        transaction.desc = items[8] ? items[8].replace(/["']/g, "").trim() : "";
         // Bind account to tenant.
         linkTenant(transaction);
 
@@ -55,7 +63,7 @@ function parseGirotel(text) { // ING bank.
 }
 
 function parseSNS(text) { // SNS bank.
-    var csvArray = CSVToArray(text, ";");
+    var csvArray = CSVToArray(text, ",");
     for (var r = 0; r < csvArray.length; r++) {
         var items = csvArray[r];
         var transaction = {};
