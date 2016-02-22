@@ -15,7 +15,7 @@ Searches the accountnumber in your tenant data and checks each payment with the 
 ###Supports:
 * Girotel CSV
 * SNS CSV
-* ABN CSV (todo)
+* ABN CSV
 
 ###Features:
 * Search by any field
@@ -25,7 +25,6 @@ Searches the accountnumber in your tenant data and checks each payment with the 
 * Stores all data in localStorage
 
 ###TODO:
-* Add support for ABN
 * Group payments (by month)
 * Fix some CSS issues
 * Intelligently keep old data when a new bank file is loaded
