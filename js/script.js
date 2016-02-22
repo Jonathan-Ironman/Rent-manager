@@ -4,9 +4,9 @@ var huurders = JSON.parse(localStorage["huurders"] || null) || [];
 
 var ngRentCtrl;
 
-$(function () { // Init.
+// Init.
+$(function () {
     fileReader();
-    //showHuurders();
     ngRentCtrl = angular.element(document.body).scope();
 });
 
@@ -24,9 +24,9 @@ function parseCSV(text, type) {
             parseSNS(text);
             break;
         case "Huurders":
-            parseHuurders(text);
-            return; // Returns
-        default: throw new Error("Parser for '" + datatype + "' not implemented.");
+            return parseHuurders(text);
+        default:
+            throw new Error("Parser for '" + type + "' not implemented.");
     }
 
     // Store.
@@ -43,8 +43,9 @@ function resetData() {
     ngRentCtrl.setData(data);
 }
 
-function parseGirotel(text) { // ING bank.
-    var csvArray = CSVToArray(text);
+// ING bank.
+function parseGirotel(text) {
+    var csvArray = csvToArray(text);
     for (var r = 0; r < csvArray.length; r++) {
         var items = csvArray[r];
         var transaction = {};
@@ -53,7 +54,7 @@ function parseGirotel(text) { // ING bank.
         transaction.name = items[1].replace(/["']/g, "").trim(); // Trim quotes and whitespace.
         transaction.date = parseDate(items[0]); //jjjjmmdd
         transaction.amount = items[5] == "Bij" ? items[6] : "-" + items[6]; // "Bij" of "Af"
-        transaction.amount = parseFloat(transaction.amount);
+        transaction.amount = parseFloat(transaction.amount.replace(",", ".")); // Replace decimal separator
         transaction.desc = items[8] ? items[8].replace(/["']/g, "").trim() : "";
         // Bind account to tenant.
         linkTenant(transaction);
@@ -62,8 +63,9 @@ function parseGirotel(text) { // ING bank.
     }
 }
 
-function parseSNS(text) { // SNS bank.
-    var csvArray = CSVToArray(text, ",");
+// SNS bank.
+function parseSNS(text) {
+    var csvArray = csvToArray(text, ",");
     for (var r = 0; r < csvArray.length; r++) {
         var items = csvArray[r];
         var transaction = {};
@@ -81,8 +83,9 @@ function parseSNS(text) { // SNS bank.
     }
 }
 
-function parseABN(text) { // ABN bank. You are basterds.
-    var csvArray = CSVToArray(text, "\t");
+// ABN bank. You are basterds.
+function parseABN(text) {
+    var csvArray = csvToArray(text, "\t");
     var reAcc = /IBAN:\s*(\S+)/;
     var reAcc2 = /IBAN\/([^\/]+)\//;
     var reName = /Naam:\s*(.+)\s\s/;
@@ -122,19 +125,22 @@ function linkTenant(transaction) {
         if (huurders[j].account.indexOf(transaction.account) > -1) {
             transaction.tenant = huurders[j].name;
             transaction.rent = parseFloat(huurders[j].rent);
-            transaction.diff = huurders[j].rent - transaction.amount; //TODO monthly!!!
+            // TODO: monthly!!!
+            transaction.diff = huurders[j].rent - transaction.amount;
             return;
         }
     }
 }
 
-function parseHuurders(text) { // CSV ; separated list.
+// CSV ; separated list.
+function parseHuurders(text) {
     huurders = [];
 
     var rows = text.split('\n');
     for (var r = 0; r < rows.length; r++) {
         var items = rows[r].split(';');
-        if (items[3] == undefined || items[3] == "" || !items[3].match(/\d/)) continue; // Skip blank or text only (titles/comments) Accountnumbers.
+        if (items[3] == undefined || items[3] == "" || !items[3].match(/\d/))
+            continue; // Skip blank or text only (titles/comments) Accountnumbers.
         var huurder = {};
         huurder.address = items[0];
         huurder.name = items[1];
@@ -152,52 +158,6 @@ function parseHuurders(text) { // CSV ; separated list.
     ngRentCtrl.setData(huurders, "tenants");
 }
 
-function toTable() {
-    refined = data.filter(function (row) {
-        return parseInt(row.account) > 0 &&
-               //row.name >= 500 &&
-               //row.date >= 2 &&
-               parseFloat(row.amount) > 0;
-    });
-
-    // Bottom.
-    var output = "<table><thead><tr><th>Account</th><th>Name</th><th>Date</th><th>Amount</th><th>Desc</th></tr></thead><tbody>";
-    for (var i = 0; i < refined.length; i++) {
-        output += "<tr><td>" + refined[i].account + "</td><td>" + refined[i].name + "</td><td>" + refined[i].date.toLocaleDateString() + "</td><td>&euro; " + refined[i].amount + "</td><td>" + refined[i].desc + "</td></tr>";
-    }
-    output += "</tbody></table>";
-    $('#output').html(output);
-
-    // Top.
-    var table = "<table><thead><tr><th>Account</th><th>Name</th><th>Date</th><th>Amount</th><th>Rent</th><th>Diff</th></tr></thead><tbody>";
-    for (var i = 0; i < refined.length; i++) {
-        for (var j = 0; j < huurders.length; j++) {
-            if (huurders[j].account.indexOf(refined[i].account) == -1)
-                continue;
-            else {
-                var diff = (huurders[j].rent - refined[i].amount).toFixed(2); //TODO monthly!!!
-                var style = " style='background-color: ";
-                if (diff > 0)
-                    style += "red;'";
-                else
-                    style += "green;'";
-
-                table += "<tr><td>" + refined[i].account
-                  + "</td><td>" + huurders[j].name
-                  + "</td><td>" + (refined[i].date.getMonth() + 1) + "-" + refined[i].date.getFullYear()
-                  + "</td><td>&euro; " + refined[i].amount
-                  + "</td><td>&euro; " + huurders[j].rent
-                  + "</td><td" + style
-                  + ">" + diff
-                  + "</td></tr>";
-            }
-        }
-    }
-    table += "</tbody></table>";
-
-    $('#top').html(table);
-} //Obsolete
-
 function parseDate(str) { //jjjjmmdd
     var arr = [];
     str = str.replace(/[^\d.]/g, ""); //strip non digits
@@ -214,16 +174,6 @@ function parseDateDagMaandJaar(strDate) { // dd-mm-jjjj
     return new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
 }
 
-function showHuurders() {
-    // Replaced by angular
-    //var output = "<table><thead><tr><th>Huur</th><th>Name</th></tr></thead><tbody>";
-    //for (var i = 0; i < huurders.length; i++) {
-    //    output += "<tr onclick='showInfo(" + i + ");'><td>&euro; " + huurders[i].rent + "</td><td>" + huurders[i].name + "</td></tr>";
-    //}
-    //output += "</tbody></table>";
-
-    //$('#huurderslijst').html(output);
-}
 
 function fileReader() {
     if (!window.FileReader) {
@@ -284,7 +234,7 @@ function exportToCsv(csv) { // Not used.
 // This will parse a delimited string into an array of
 // arrays. The default delimiter is the comma, but this
 // can be overriden in the second argument.
-function CSVToArray(strData, strDelimiter) {
+function csvToArray(strData, strDelimiter) {
     // Check to see if the delimiter is defined. If not,
     // then default to comma.
     strDelimiter = (strDelimiter || ",");
